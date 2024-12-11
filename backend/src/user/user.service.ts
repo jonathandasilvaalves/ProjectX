@@ -6,6 +6,11 @@ interface CreateUserParams {
     email: string;
 }
 
+interface UpdateUserParams {
+    name?: string;
+    email?: string;
+}
+
 @Injectable()
 export class UserService {
     constructor(private prisma: PrismaService){}
@@ -30,6 +35,24 @@ export class UserService {
                 name,
                 email
             }
+        });
+    }
+
+    async updateUser(id: string, { name, email}: UpdateUserParams) {
+        const userExist = await this.prisma.user.findUnique({
+            where: { id },
+        });
+
+        if (!userExist) {
+            throw new Error('User not found!');
+        }
+
+        return this.prisma.user.update({
+            where: { id },
+            data: {
+                name,
+                email,
+            },
         });
     }
 }
