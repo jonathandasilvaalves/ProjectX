@@ -4,12 +4,15 @@ import { User } from './user.module';
 import { UserService } from './user.service';
 import { CreateUserInput } from './inputs/create-user-input';
 import { UpdateUserInput } from './inputs/update-user-input';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from '../auth/gql-auth-guard';
 
 @Resolver()
 export class UserResolver {
     constructor(private userService: UserService) {}
 
     @Query(() => [User])
+    @UseGuards(GqlAuthGuard)
     users() {
         return this.userService.listAllUsers();
     }
@@ -20,6 +23,7 @@ export class UserResolver {
     }
 
     @Mutation(() => User)
+    @UseGuards(GqlAuthGuard)
     updateUser(
         @Args('id') id: string,
         @Args('data') data: UpdateUserInput) {
